@@ -1,0 +1,22 @@
+/* Color Palette: https://colorhunt.co/palette/290405 */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap');
+.weather-card {
+  /* width: 150;
+  height: 300; */
+  margin-top:30px;
+}
+
+.weather-color {
+  background-color: #aedefc;
+  color: #fff5eb;
+}
+
+.weather-header {
+  font-family: "Poppins", sans-serif;
+  font-size: bold;
+  text-align: center;
+}
+
+.weather-content {
+  font-family: "Poppins", sans-serif;
+}
