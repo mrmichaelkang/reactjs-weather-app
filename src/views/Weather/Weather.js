@@ -10,13 +10,17 @@ import './Weather.css'
 
 function Weather() {
   const [data,setData] = useState([]);
+  let [isLocation, setIsLocation] = useState(true);
   const { search } = useLocation();
   const values = queryString.parse(search);
   const cityName = values.location[0].toUpperCase() + values.location.substring(1)
   const url = setCityLocation(cityName);
-  let [isLocation, setIsLocation] = useState(true);
-
-
+  const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+  let dayPos = new Date().getDay();
+  const currentDate = new Date();
+  let month = currentDate.getMonth() + 1;
+  let date = currentDate.getDate();
+  
   // eslint-disable-next-line
   useEffect(() => {
   
@@ -24,8 +28,32 @@ function Weather() {
     // eslint-disable-next-line
   }, []);
 
-  const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-  let dayPos = new Date().getDay();
+
+  const getDaysInMonth = () => {
+    return new Date(Number(currentDate.getFullYear()), currentDate.getMonth()  + 1, 0).getDate();
+  }
+
+  const getMonth = () => {
+    if(date > getDaysInMonth()) {
+      month += 1;
+      return month;
+    }
+    return month;
+  }
+
+  const getDate = () => { 
+    if (date > getDaysInMonth()) {
+      date = 1;
+      return date;
+    }
+
+    const tempDate = date;
+    date = tempDate + 1;
+    console.log(`TEMP: ${tempDate}`);
+    console.log(`DATE: ${date}`);
+    return tempDate;
+  }
+
 
 // eslint-disable-next-line
   const fetchWeather = async () => {
@@ -34,14 +62,13 @@ function Weather() {
     console.log(url);
     const response = await fetch(url);
     let weatherData = await response.json();
-    console.log(weatherData);
 
     setData([])
   
     if(weatherData.cod === '200') { 
       for(let index = 0; index < weatherData.list.length; index+= 8) {
         let description = weatherData.list[index].weather[0].description[0].toUpperCase()
-          + weatherData.list[index].weather[0].description.substring(1);
+          + weatherData.list[index].weather[0].description.substring(1).toLowerCase();
 
         data.push( {
           currentTemp: weatherData.list[index].main.temp, 
@@ -53,8 +80,6 @@ function Weather() {
       } 
       setData(data);
 
-      console.log(`Search: ${search}`);
-      console.log(`Location: ${values.location}`)
   } else {
     setIsLocation(false);
     data.push( {
@@ -80,7 +105,7 @@ function Weather() {
           <Grid item xs={12} sm={4} md={2}> 
             <WeatherCard day={generateWeekdayName()} 
             mainTemp={d.currentTemp} minTemp={d.minTemp} maxTemp={d.maxTemp} 
-            icon={d.icon} desc={d.desc}/> 
+            icon={d.icon} desc={d.desc} month={getMonth()} date={getDate()}/> 
           </Grid>
         ))}
       </Grid>
