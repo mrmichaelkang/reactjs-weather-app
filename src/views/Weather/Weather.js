@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import {setCityLocation} from '../../weather_config';
+import {setCityLocation, setCoordinates} from '../../weather_config';
 import  WeatherCard from '../../components/WeatherCard';
 import { Grid, Typography, Button } from "@material-ui/core";
 import { useLocation } from "react-router-dom";
@@ -14,16 +14,24 @@ function Weather() {
   const { search } = useLocation();
   const values = queryString.parse(search);
   const cityName = values.location[0].toUpperCase() + values.location.substring(1)
-  const url = setCityLocation(cityName);
+  let url = setCityLocation(cityName);
+  // let url = "";
   const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
   let dayPos = new Date().getDay();
   const currentDate = new Date();
   let month = currentDate.getMonth() + 1;
   let date = currentDate.getDate();
-  
+
+  navigator.geolocation.getCurrentPosition((position) => {
+    console.log(position)
+    console.log(`Lat: ${position.coords.latitude}`);
+    console.log(`Lon: ${position.coords.longitude}`);
+    url = setCoordinates(position.coords.latitude, position.coords.longitude);
+  });
+
+
   // eslint-disable-next-line
   useEffect(() => {
-  
     fetchWeather();
     // eslint-disable-next-line
   }, []);
@@ -49,19 +57,17 @@ function Weather() {
 
     const tempDate = date;
     date = tempDate + 1;
-    console.log(`TEMP: ${tempDate}`);
-    console.log(`DATE: ${date}`);
     return tempDate;
   }
 
 
 // eslint-disable-next-line
   const fetchWeather = async () => {
-    // Increment by 8 to get current weather for 5 days from 0 -> 8 -> 16 -> 24 -> 32
-    // https://api.openweathermap.org/data/2.5/forecast?q=rialto&appid=87a68035993d3c657ffb0b61572d36e0&units=imperial
+        
     console.log(url);
     const response = await fetch(url);
     let weatherData = await response.json();
+    console.log("Weather Data: " + weatherData);
 
     setData([])
   
@@ -81,20 +87,19 @@ function Weather() {
       setData(data);
 
   } else {
-    setIsLocation(false);
-    data.push( {
-      currentTemp: null, 
-      minTemp: null, 
-      maxTemp: null,
-      icon: null,
-      desc: null
-    });
-  }
-
+      setIsLocation(false);
+      data.push( {
+        currentTemp: null, 
+        minTemp: null, 
+        maxTemp: null,
+        icon: null,
+        desc: null
+      });
+    }
   }
   
   const generateWeekdayName = () => {
-    return days[(dayPos < days.length) ? dayPos++ : (dayPos = 0, dayPos++)]
+    return days[(dayPos < days.length) ? dayPos++ : (dayPos = 0, dayPos++)];
   }
 
   return (
