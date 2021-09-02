@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import {setCityLocation, setCoordinates} from '../../weather_config';
+import {setCityLocation} from '../../weather_config';
 import  WeatherCard from '../../components/WeatherCard';
 import { Grid, Typography, Button } from "@material-ui/core";
 import { useLocation } from "react-router-dom";
@@ -21,13 +21,11 @@ function Weather() {
   const currentDate = new Date();
   let month = currentDate.getMonth() + 1;
   let date = currentDate.getDate();
+  let keyValue = 0;
 
-  navigator.geolocation.getCurrentPosition((position) => {
-    console.log(position)
-    console.log(`Lat: ${position.coords.latitude}`);
-    console.log(`Lon: ${position.coords.longitude}`);
-    url = setCoordinates(position.coords.latitude, position.coords.longitude);
-  });
+  // navigator.geolocation.getCurrentPosition((position) => {
+  //   url = setCoordinates(position.coords.latitude, position.coords.longitude);
+  // });
 
 
   // eslint-disable-next-line
@@ -64,10 +62,8 @@ function Weather() {
 // eslint-disable-next-line
   const fetchWeather = async () => {
         
-    console.log(url);
     const response = await fetch(url);
     let weatherData = await response.json();
-    console.log("Weather Data: " + weatherData);
 
     setData([])
   
@@ -107,7 +103,7 @@ function Weather() {
       <Typography className='header' variant='h2' align='center'>{ isLocation ? `${cityName}'s Current Weather` : 'Location Not Found' }</Typography>
       <Grid spacing={1} container direction='row' justify='center' alignItems='center'>
         {data.map(d => (
-          <Grid item xs={12} sm={4} md={2}> 
+          <Grid item xs={12} sm={4} md={2} key={keyValue++}> 
             <WeatherCard day={generateWeekdayName()} 
             mainTemp={d.currentTemp} minTemp={d.minTemp} maxTemp={d.maxTemp} 
             icon={d.icon} desc={d.desc} month={getMonth()} date={getDate()}/> 
