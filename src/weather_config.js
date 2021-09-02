@@ -1,4 +1,4 @@
-const apiKey = "87a68035993d3c657ffb0b61572d36e06e0";
+const apiKey = process.env.REACT_APP_API_KEY;
 let city = "";
 let url = "";
 
