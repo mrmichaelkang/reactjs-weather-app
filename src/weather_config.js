@@ -10,6 +10,6 @@ export function setCityLocation(data) {
 }
 
 export function setCoordinates(lat, lon) {
-  url = `https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}&appid=87a68035993d3c657ffb0b61572d36e0&units=imperial&exclude=daily,alert,minutely`;
+  url = `https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}&appid=${apiKey}&units=imperial&exclude=daily,alert,minutely`;
   return url;
 };
